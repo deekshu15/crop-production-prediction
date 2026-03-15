@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CropCast AI - Predict Crop Production</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body data-page="index">
+  <div id="loader">
+    <div class="loader-ring"></div>
+  </div>
+
+  <nav class="navbar" id="navbar">
+    <div class="logo">🌾 CropCast AI</div>
+    <div class="nav-links">
+      <a href="#" class="nav-link">Home</a>
+      <a href="#predict-section" class="nav-link">Prediction</a>
+      <a href="#about" class="nav-link">About</a>
+    </div>
+  </nav>
+
+  <section class="hero" id="home">
+    <div class="hero-content">
+      <h1 class="hero-title">
+        <span>Predict Crop</span><br />
+        <span>Production</span><br />
+        <span class="accent italic"> with AI</span>
+      </h1>
+      <p class="hero-subtitle">
+        Powered by XGBoost & Random Forest trained on real Indian agriculture data
+      </p>
+      <button class="btn-cta" id="start-btn">Start Predicting →</button>
+
+      <div class="stats-row">
+        <div class="stat-item">
+          <div class="stat-number" id="records-counter" data-target="246000" data-suffix="+">246K+</div>
+          <div class="stat-label">Records</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" id="crops-counter" data-target="50" data-suffix="+">50+</div>
+          <div class="stat-label">Crops</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" id="states-counter" data-target="33">33</div>
+          <div class="stat-label">States</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" id="years-counter" data-target="19">19</div>
+          <div class="stat-label">Years</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="predict-section" id="predict-section">
+    <div class="predict-card">
+      <h2>Predict Your Yield</h2>
+      <p>Fill in your field details to get an AI-powered production estimate</p>
+
+      <form id="predict-form" class="predict-form" novalidate>
+        <div class="form-group">
+          <label for="state-select">State</label>
+          <select id="state-select" required>
+            <option value="">Select State</option>
+          </select>
+          <small class="error-text"></small>
+        </div>
+
+        <div class="form-group">
+          <label for="district-select">District</label>
+          <select id="district-select" required>
+            <option value="">Select State First</option>
+          </select>
+          <small class="error-text"></small>
+        </div>
+
+        <div class="form-group">
+          <label for="season-select">Season</label>
+          <select id="season-select" required>
+            <option value="">Select Season</option>
+          </select>
+          <small class="error-text"></small>
+        </div>
+
+        <div class="form-group">
+          <label for="crop-select">Crop</label>
+          <select id="crop-select" required>
+            <option value="">Select Crop</option>
+          </select>
+          <small class="error-text"></small>
+        </div>
+
+        <div class="form-group">
+          <label for="year-input">Crop Year</label>
+          <input id="year-input" type="number" min="1900" max="2100" required placeholder="e.g. 2022" />
+          <small class="error-text"></small>
+        </div>
+
+        <div class="form-group">
+          <label for="area-input">Area (Hectares)</label>
+          <input id="area-input" type="number" min="0.01" step="0.01" required placeholder="e.g. 500" />
+          <small class="error-text"></small>
+        </div>
+
+        <button id="predict-btn" type="submit" class="btn-predict">Predict Yield →</button>
+      </form>
+
+      <div id="result-card" class="result-card">
+        <h3>🌾 Predicted Production</h3>
+        <div class="result-value" id="result-production">0 t</div>
+
+        <div class="result-grid">
+          <div>Yield/hectare</div>
+          <div id="result-yield">0.00 t/ha</div>
+
+          <div>Confidence</div>
+          <div>
+            <div class="confidence-bar-track">
+              <div class="confidence-bar-fill" id="confidence-fill"></div>
+            </div>
+            <span id="confidence-label">0%</span>
+          </div>
+
+          <div>Model Used</div>
+          <div><span id="result-model" class="badge">Model</span></div>
+
+          <div>Interpretation</div>
+          <div id="result-interpretation">Near average yield expected for this region</div>
+        </div>
+
+        <button id="new-prediction-btn" type="button" class="btn-reset">New Prediction</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="how-section" id="about">
+    <h2 class="section-title">How It Works</h2>
+    <div class="how-cards">
+      <div class="how-card">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="4" y="3" width="16" height="18" rx="2"></rect>
+            <line x1="8" y1="7" x2="16" y2="7"></line>
+            <line x1="8" y1="12" x2="16" y2="12"></line>
+            <line x1="8" y1="17" x2="13" y2="17"></line>
+          </svg>
+        </div>
+        <h3>Input Your Data</h3>
+        <p>Enter your field's state, crop type, season, area and year</p>
+      </div>
+
+      <div class="how-card">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 3h6v3H9z"></path>
+            <rect x="4" y="6" width="16" height="12" rx="2"></rect>
+            <path d="M8 10h2v2H8zM12 10h2v2h-2zM16 10h2v2h-2z"></path>
+            <path d="M9 18v3M15 18v3"></path>
+          </svg>
+        </div>
+        <h3>AI Processes</h3>
+        <p>XGBoost model trained on 246,000+ real crop records analyses patterns</p>
+      </div>
+
+      <div class="how-card">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="4" y1="19" x2="20" y2="19"></line>
+            <rect x="6" y="10" width="3" height="9"></rect>
+            <rect x="11" y="6" width="3" height="13"></rect>
+            <rect x="16" y="13" width="3" height="6"></rect>
+          </svg>
+        </div>
+        <h3>Get Prediction</h3>
+        <p>Receive production estimate in tonnes with confidence score</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="feature-section">
+    <h2 class="section-title">What Drives Crop Production?</h2>
+    <p class="section-subtitle">Feature importance scores from the trained ML model</p>
+    <div class="chart-card">
+      <canvas id="featureChart"></canvas>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-col">
+      <div class="logo">🌾 CropCast AI</div>
+      <p>Powered by XGBoost & scikit-learn</p>
+    </div>
+    <div class="footer-col footer-links">
+      <a href="#">Home</a>
+      <a href="https://github.com" target="_blank" rel="noreferrer">GitHub</a>
+    </div>
+    <div class="footer-col align-right">
+      <p>Built with ♥ using Python & ML</p>
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
